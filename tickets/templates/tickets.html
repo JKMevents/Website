@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    {% load static %}
+    <style>
+        /* Add your additional styles here */
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .display {
+            flex: 1;
+            background-color: #e0e0e0;
+            padding: 20px;
+            text-align: center; /* Center the image */
+        }
+
+        .number-pad {
+            flex: 1;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .number-pad button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <div class="row">
+        <div class="col-md-6 display">
+            <!-- Display content goes here -->
+            <div class="image-container">
+                <img src="{% static "qrcode_0001.png" %}" alt="Your Image">
+            </div>
+            <div class="h1" id="display-number"><!--display the entered number -->0</div>
+
+        </div>
+    
+
+        <div class="col-md-6 number-pad">
+            <!-- Number pad content goes here -->
+
+            <div class="row">
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(1)">1</button>
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(2)">2</button>
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(3)">3</button>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(4)">4</button>
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(5)">5</button>
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(6)">6</button>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(7)">7</button>
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(8)">8</button>
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(9)">9</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary btn-block" onclick="updateDisplay(10)">10</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <form id="enterForm" method="post" action= {% url "generate_qr_code" %}>
+                        {% csrf_token %}
+                        <input type="hidden", id="entered_number" name="entered_number">
+                    <button class="btn btn-success btn-block" onclick="enterTicket()">Enter</button>
+                    </form>
+                    <button class="btn btn-success btn-block" onclick="printTicket()">Print</button>
+                
+                    
+                    <button class="btn btn-danger btn-block" onclick="clearDisplay()">Clear</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+
+
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery (required by Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+
+        // JavaScript function to update the display with the entered number
+        function updateDisplay(number) {
+            var displayNumber = document.getElementById('display-number');
+            
+            if (number === 'clear') {
+                displayNumber.innerText = '0';
+            } else {
+                displayNumber.innerText = number;
+            }
+
+            document.getElementById('entered_number').value = displayNumber.innerText;
+        }
+    
+        // JavaScript function to print the ticket
+        function printTicket() {
+            // Add logic for printing the ticket
+        }
+    
+        // JavaScript function to enter the ticket
+        function enterTicket() {
+            // Add logic for entering the ticket
+            var enteredNumber = document.getElementById('entered_number').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{% url "generate_qr_code" %}', true );
+            xhr.setRequestHeader('Content-Type',  'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                console.log(xhr.responseText);
+
+            }
+            xhr.send('entered_number=' +  enteredNumber);
+
+            
+            
+            updateDisplay('clear');
+            
+        }
+    
+        // JavaScript function to clear the display
+        function clearDisplay() {
+            updateDisplay('clear');
+        }
+    </script>
+</body>
+
+
+</html>
